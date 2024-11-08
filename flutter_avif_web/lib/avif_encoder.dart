@@ -98,14 +98,14 @@ external JSPromise _initBindgen(String workerPath);
 
 @JS('window.avif_encoder.encode')
 external JSPromise _encode(
-  Uint8List pixels,
-  Uint8List durations,
-  Uint32List options,
-  Uint8List exifData,
+  JSUint8Array pixels,
+  JSUint8Array durations,
+  JSUint32Array options,
+  JSUint8Array exifData,
 );
 
 @JS('window.avif_encoder.decode')
 external JSPromise _decode(
-  Uint8List data,
+  JSUint8Array data,
   int orientation,
 );
