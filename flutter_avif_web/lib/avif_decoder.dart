@@ -45,7 +45,7 @@ Future<void> loadScript() async {
 }
 
 Future<Frame> decodeSingleFrameImage(Uint8List data) async {
-  final  decoded = await (_decodeSingleFrameImage(data).toDart);
+  final  decoded = await (_decodeSingleFrameImage(data.toJS).toDart);
   if (decoded is! JSObject) {
     throw Exception('Failed to decode image');
   }
@@ -59,7 +59,7 @@ Future<Frame> decodeSingleFrameImage(Uint8List data) async {
 }
 
 Future<AvifInfo> initMemoryDecoder(String key, Uint8List data) async {
-  final decoded = await (_initMemoryDecoder(key, data)).toDart;
+  final decoded = await (_initMemoryDecoder(key, data.toJS)).toDart;
   if (decoded is! JSObject) {
     throw Exception('Failed to initialize decoder');
   }
@@ -100,10 +100,10 @@ Future<bool> disposeDecoder(String key) async {
 external JSPromise _initBindgen(String workerPath);
 
 @JS('window.avif_decoder.decodeSingleFrameImage')
-external JSPromise _decodeSingleFrameImage(Uint8List data);
+external JSPromise _decodeSingleFrameImage(JSUint8Array data);
 
 @JS('window.avif_decoder.initMemoryDecoder')
-external JSPromise _initMemoryDecoder(String key, Uint8List data);
+external JSPromise _initMemoryDecoder(String key, JSUint8Array data);
 
 @JS('window.avif_decoder.getNextFrame')
 external JSPromise _getNextFrame(String key);
