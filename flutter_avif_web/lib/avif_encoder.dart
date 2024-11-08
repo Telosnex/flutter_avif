@@ -7,7 +7,6 @@ import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.
 
 import 'dart:async';
 import 'dart:js_interop';
-import 'dart:js_util';
 import 'dart:typed_data';
 
 import 'package:web/web.dart' hide Uint32List;
@@ -28,7 +27,7 @@ Future<void> loadScript() async {
   final script = document.createElement('script') as HTMLScriptElement;
   script.src = assetManager
       .getAssetUrl('packages/flutter_avif_web/web/avif_encoder.loader.js');
-        // Using dart:web's querySelector instead of direct head access
+  // Using dart:web's querySelector instead of direct head access
   final head = document.querySelector('head');
   if (head != null) {
     head.appendChild(script);
@@ -37,8 +36,8 @@ Future<void> loadScript() async {
   }
   await script.onLoad.first;
 
-  final initBindgen = promiseToFuture(_initBindgen(assetManager
-      .getAssetUrl('packages/flutter_avif_web/web/avif_encoder.worker.js')));
+  final initBindgen = (_initBindgen(assetManager
+      .getAssetUrl('packages/flutter_avif_web/web/avif_encoder.worker.js'))).toDart;
   await initBindgen;
 
   _scriptLoaderCompleter!.complete();
@@ -57,7 +56,7 @@ Future<Uint8List> encodeAvif({
   required int maxQuantizerAlpha,
   required int minQuantizerAlpha,
   required Uint8List exifData,
-}) {
+}) async {
   final options = Uint32List.fromList([
     width,
     height,
@@ -69,11 +68,20 @@ Future<Uint8List> encodeAvif({
     maxQuantizerAlpha,
     minQuantizerAlpha,
   ]);
-  return promiseToFuture(_encode(pixels, durations, options, exifData));
+  final jsAnyResult =
+      await _encode(pixels, durations, options, exifData).toDart;
+  if (jsAnyResult == null) {
+    throw Exception('Failed to encode image');
+  }
+  final result = jsAnyResult as JSUint8Array;
+  return result.toDart;
 }
 
 Future<DecodeData> decode(Uint8List data, int orientation) async {
-  final JSObject decoded = await promiseToFuture(_decode(data, orientation));
+  final  decoded = await (_decode(data, orientation).toDart);
+  if (decoded == null || decoded is! JSObject) {
+    throw Exception('Failed to decode image');
+  }
   final rgbaData = decoded.getProperty('data'.toJS) as List<dynamic>;
   final durations = decoded.getProperty('durations'.toJS) as List<dynamic>;
 

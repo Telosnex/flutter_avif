@@ -8,7 +8,6 @@ import 'dart:ui_web';
 import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.dart';
 
 import 'dart:async';
-import 'dart:js_util';
 import 'dart:typed_data';
 
 import 'package:web/web.dart';
@@ -38,15 +37,18 @@ Future<void> loadScript() async {
     throw Exception('Head element not found in document');
   }
 
-  final initBindgen = promiseToFuture(_initBindgen(assetManager
-      .getAssetUrl('packages/flutter_avif_web/web/avif_decoder.worker.js')));
+  final initBindgen = _initBindgen(assetManager
+      .getAssetUrl('packages/flutter_avif_web/web/avif_decoder.worker.js')).toDart;
   await initBindgen;
 
   _scriptLoaderCompleter!.complete();
 }
 
 Future<Frame> decodeSingleFrameImage(Uint8List data) async {
-  final JSObject decoded = await promiseToFuture(_decodeSingleFrameImage(data));
+  final  decoded = await (_decodeSingleFrameImage(data).toDart);
+  if (decoded is! JSObject) {
+    throw Exception('Failed to decode image');
+  }
 
   return Frame(
     data: decoded.getProperty('data'.toJS) as Uint8List,
@@ -57,7 +59,10 @@ Future<Frame> decodeSingleFrameImage(Uint8List data) async {
 }
 
 Future<AvifInfo> initMemoryDecoder(String key, Uint8List data) async {
-  final JSObject decoded = await promiseToFuture(_initMemoryDecoder(key, data));
+  final decoded = await (_initMemoryDecoder(key, data)).toDart;
+  if (decoded is! JSObject) {
+    throw Exception('Failed to initialize decoder');
+  }
 
   return AvifInfo(
     width: decoded.getProperty('width'.toJS) as int,
@@ -68,7 +73,10 @@ Future<AvifInfo> initMemoryDecoder(String key, Uint8List data) async {
 }
 
 Future<Frame> getNextFrame(String key) async {
-  final JSObject decoded = await promiseToFuture(_getNextFrame(key));
+  final  decoded = await (_getNextFrame(key)).toDart;
+  if (decoded is! JSObject) {
+    throw Exception('Failed to get next frame');
+  }
 
   return Frame(
     data: decoded.getProperty('data'.toJS) as Uint8List,
@@ -79,12 +87,12 @@ Future<Frame> getNextFrame(String key) async {
 }
 
 Future<bool> resetDecoder(String key) async {
-  await promiseToFuture(_resetDecoder(key));
+  await _resetDecoder(key).toDart;
   return true;
 }
 
 Future<bool> disposeDecoder(String key) async {
-  await promiseToFuture(_disposeDecoder(key));
+  await _disposeDecoder(key).toDart;
   return true;
 }
 
