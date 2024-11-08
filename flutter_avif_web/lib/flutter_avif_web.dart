@@ -1,4 +1,3 @@
-import 'dart:js' as js;
 import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'avif_encoder.dart' as wasm_encoder;
@@ -6,7 +5,7 @@ import 'avif_decoder.dart' as wasm_decoder;
 
 class FlutterAvifWeb extends FlutterAvifPlatform {
   static void registerWith([Object? registrar]) async {
-    final isCanvasKit = js.context['flutterCanvasKit'] != null;
+    final isCanvasKit = true;
     FlutterAvifPlatform.useNativeDecoder = !isCanvasKit;
 
     FlutterAvifPlatform.api = FlutterAvifWebImpl();
