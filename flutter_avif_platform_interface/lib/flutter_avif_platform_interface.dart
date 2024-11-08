@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 import 'bridge_generated.io.dart'
-    if (dart.library.html) 'bridge_generated.web.dart';
+    if (dart.library.js_interop) 'bridge_generated.web.dart';
 export 'bridge_generated.io.dart'
-    if (dart.library.html) 'bridge_generated.web.dart';
+    if (dart.library.js_interop) 'bridge_generated.web.dart';
 
 abstract class FlutterAvifPlatform {
   static late final FlutterAvif api;
