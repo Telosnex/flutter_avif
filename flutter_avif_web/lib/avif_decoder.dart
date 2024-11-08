@@ -11,7 +11,6 @@ import 'dart:async';
 import 'dart:js_util';
 import 'dart:typed_data';
 
-import 'package:js/js.dart';
 import 'package:web/web.dart';
 
 Completer? _scriptLoaderCompleter;

@@ -10,7 +10,6 @@ import 'dart:js_interop';
 import 'dart:js_util';
 import 'dart:typed_data';
 
-import 'package:js/js.dart';
 import 'package:web/web.dart' hide Uint32List;
 
 Completer? _scriptLoaderCompleter;
