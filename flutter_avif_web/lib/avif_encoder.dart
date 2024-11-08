@@ -68,8 +68,12 @@ Future<Uint8List> encodeAvif({
     maxQuantizerAlpha,
     minQuantizerAlpha,
   ]);
-  final jsAnyResult =
-      await _encode(pixels, durations, options, exifData).toDart;
+  final jsAnyResult = await _encode(
+    pixels.toJS,
+    durations.toJS,
+    options.toJS,
+    exifData.toJS,
+  ).toDart;
   if (jsAnyResult == null) {
     throw Exception('Failed to encode image');
   }
@@ -78,7 +82,7 @@ Future<Uint8List> encodeAvif({
 }
 
 Future<DecodeData> decode(Uint8List data, int orientation) async {
-  final  decoded = await (_decode(data, orientation).toDart);
+  final decoded = await (_decode(data.toJS, orientation).toDart);
   if (decoded == null || decoded is! JSObject) {
     throw Exception('Failed to decode image');
   }
