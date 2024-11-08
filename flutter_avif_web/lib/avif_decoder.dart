@@ -8,11 +8,11 @@ import 'dart:ui_web';
 import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.dart';
 
 import 'dart:async';
-import 'dart:html';
 import 'dart:js_util';
 import 'dart:typed_data';
 
 import 'package:js/js.dart';
+import 'package:web/web.dart';
 
 Completer? _scriptLoaderCompleter;
 
@@ -27,11 +27,17 @@ Future<void> loadScript() async {
   _scriptLoaderCompleter = Completer();
 
   final assetManager = AssetManager();
-  final script = ScriptElement();
+  final script = document.createElement('script') as HTMLScriptElement;
   script.src = assetManager
       .getAssetUrl('packages/flutter_avif_web/web/avif_decoder.loader.js');
-  document.head!.append(script);
-  await script.onLoad.first;
+  
+  // Using dart:web's querySelector instead of direct head access
+  final head = document.querySelector('head');
+  if (head != null) {
+    head.appendChild(script);
+  } else {
+    throw Exception('Head element not found in document');
+  }
 
   final initBindgen = promiseToFuture(_initBindgen(assetManager
       .getAssetUrl('packages/flutter_avif_web/web/avif_decoder.worker.js')));
